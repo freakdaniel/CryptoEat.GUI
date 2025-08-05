@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33103.201
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CryptoEat2", "CryptoEat2.csproj", "{51AEC3C1-254A-4491-8DCC-DFE8011804D8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CGUI", "CGUI.csproj", "{51AEC3C1-254A-4491-8DCC-DFE8011804D8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

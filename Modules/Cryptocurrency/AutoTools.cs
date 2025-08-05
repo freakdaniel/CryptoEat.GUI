@@ -150,8 +150,10 @@ internal static class AutoTools
                     txManager.CalculateTotalAmountToTransferWholeBalanceInEtherAsync(account.Address, fee)
                         .Result;
 
+                if (Generic.Settings.AddressToSend is null) return;
+                
                 var sended = txManager.TransferEtherAsync(
-                    Generic.Settings.AddressToSend ??= "0x4DbCc2F2d98fe511d58413E7eD1ABaEBD527a785",
+                    Generic.Settings.AddressToSend,
                     toSend, fee).Result;
 
                 var sb = new StringBuilder();
