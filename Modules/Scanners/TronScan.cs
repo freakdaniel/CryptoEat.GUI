@@ -1,6 +1,7 @@
-﻿using System.Reflection;
+﻿using System.Net.Http;
+using System.Text.Json;
+using System.Reflection;
 using Debank;
-using Leaf.xNet;
 using MemoryPack;
 using Newtonsoft.Json;
 using ZstdSharp;
@@ -16,7 +17,7 @@ public static class TronCache
 
 internal class TronScan : IDisposable
 {
-    private HttpRequest request = new();
+    private HttpRequestMessage request = new();
 
     public void Dispose()
     {
@@ -72,19 +73,24 @@ internal class TronScan : IDisposable
         }
     }
 
-    private TronResult GetTron(string adr)
+    private static readonly HttpClient _httpClient = new();
+
+    private async Task<TronResult> GetTronAsync(string adr)
     {
-        return JsonConvert.DeserializeObject<TronResult>(request.Get($"https://apilist.tronscan.org/api/account/token_asset_overview?address={adr}").ToString()!)!;
+        var response = await _httpClient.GetAsync($"https://apilist.tronscan.org/api/account/token_asset_overview?address={adr}");
+        response.EnsureSuccessStatusCode();
+        var jsonString = await response.Content.ReadAsStringAsync();
+        return JsonConvert.DeserializeObject<TronResult>(jsonString)!;
     }
 
-    internal TronResult CachedGetTokens(string address)
+    internal async Task<TronResult> CachedGetTokensAsync(string address)
     {
         if (TronCache.CacheDictionary.TryGetValue(address, out var tokens)) return tokens;
 
         repeat:
         try
         {
-            var resp = GetTron(address);
+            var resp = await GetTronAsync(address);
             TronCache.CacheDictionary.Add(address, resp);
             return resp;
         }

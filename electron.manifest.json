@@ -1,0 +1,23 @@
+﻿{
+  "executable": "CGUI",
+  "splashscreen": {
+    "imageFile": ""
+  },
+  "name": "CryptoEat",
+  "author": "CryptoEat Team",
+  "singleInstance": true,
+  "environment": "Development",
+  "build": {
+    "appId": "com.cryptoeat.app",
+    "productName": "CryptoEat",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "**/*",
+      "!**/node_modules/**/*",
+      "!**/*.pdb"
+    ]
+  },
+  "aspCoreBackendPort": 8000
+}

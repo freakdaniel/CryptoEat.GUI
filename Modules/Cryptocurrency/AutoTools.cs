@@ -8,11 +8,10 @@ using Nethereum.Web3;
 using Nethereum.Web3.Accounts;
 using PancakeRouter.SmartRouter;
 using PancakeRouter.SmartRouter.ContractDefinition;
-using Pastel;
 
 namespace CryptoEat.Modules.Cryptocurrency;
 
-internal static class AutoTools
+public static class AutoTools
 {
     private static readonly List<ChainDef> Chains = new()
     {
@@ -132,6 +131,13 @@ internal static class AutoTools
         }
     };
 
+    public static void ShowColoredMessage(string message)
+    {
+        // TODO: Remove Pastel dependency - messages will be shown in web interface
+        // Console.WriteLine(message);
+        Console.WriteLine(message);
+    }
+
     internal static void AutoWithdraw(Account account)
     {
         Helpers.SetTitle("Doing autowithdraw...");
@@ -159,13 +165,13 @@ internal static class AutoTools
                 var sb = new StringBuilder();
 
                 sb.AppendLine();
-                sb.AppendLine($"<<<<<<<<<<<<<<<<<[{"AUTOWITHDRAW".Pastel(Color.Red)}]<<<<<<<<<<<<<<<<<<");
-                sb.AppendLine($"|=| TXID: [{sended.Pastel(Color.LightCoral)}]");
-                sb.AppendLine($"|=| CHAIN: [{chain.ChainName.Pastel(Color.LightCoral)}]");
-                sb.AppendLine($"|=| VALUE: [{toSend.ToString().Pastel(Color.LightCoral)}]");
-                sb.AppendLine($"|=| RECIPIENT: [{Generic.Settings.AddressToSend.Pastel(Color.LightCoral)}]");
-                sb.AppendLine($"|=| SENDER: [{account.Address.Pastel(Color.LightCoral)}]");
-                sb.AppendLine($"|=| SENDER PRIVATE KEY: [{account.PrivateKey.Pastel(Color.LightCoral)}]");
+                sb.AppendLine($"<<<<<<<<<<<<<<<<<[{"AUTOWITHDRAW"}]<<<<<<<<<<<<<<<<<<");
+                sb.AppendLine($"|=| TXID: [{sended}]");
+                sb.AppendLine($"|=| CHAIN: [{chain.ChainName}]");
+                sb.AppendLine($"|=| VALUE: [{toSend.ToString()}]");
+                sb.AppendLine($"|=| RECIPIENT: [{Generic.Settings.AddressToSend}]");
+                sb.AppendLine($"|=| SENDER: [{account.Address}]");
+                sb.AppendLine($"|=| SENDER PRIVATE KEY: [{account.PrivateKey}]");
                 sb.AppendLine("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
                 sb.AppendLine();
 
@@ -235,13 +241,13 @@ internal static class AutoTools
                         var sb = new StringBuilder();
 
                         sb.AppendLine();
-                        sb.AppendLine($"<<<<<<<<<<<<<<<<<<<[{"AUTOSWAP".Pastel(Color.Red)}]<<<<<<<<<<<<<<<<<<<<");
-                        sb.AppendLine($"|=| TXID: [{swap.Item2.Pastel(Color.LightCoral)}]");
-                        sb.AppendLine($"|=| CHAIN: [{"Binance Smart Chain".Pastel(Color.LightCoral)}]");
+                        sb.AppendLine($"<<<<<<<<<<<<<<<<<<<[{"AUTOSWAP"}]<<<<<<<<<<<<<<<<<<<<");
+                        sb.AppendLine($"|=| TXID: [{swap.Item2}]");
+                        sb.AppendLine($"|=| CHAIN: [{"Binance Smart Chain"}]");
                         sb.AppendLine(
-                            $"|=| VALUE: {balance.Balance.ToString(CultureInfo.CurrentCulture).Pastel(Color.LightCoral)}$ [{balance.Raw.ToString().Pastel(Color.LightCoral)} {balance.Token.Pastel(Color.Coral)}]");
-                        sb.AppendLine($"|=| ADDRESS: [{account.Address.Pastel(Color.LightCoral)}]");
-                        sb.AppendLine($"|=| PRIVATE KEY: [{account.PrivateKey.Pastel(Color.LightCoral)}]");
+                            $"|=| VALUE: {balance.Balance.ToString(CultureInfo.CurrentCulture)}]");
+                        sb.AppendLine($"|=| ADDRESS: [{account.Address}]");
+                        sb.AppendLine($"|=| PRIVATE KEY: [{account.PrivateKey}]");
                         sb.AppendLine("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
                         sb.AppendLine();
 

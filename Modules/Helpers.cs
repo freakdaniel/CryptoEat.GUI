@@ -9,7 +9,7 @@ internal static class Helpers
     internal static void SetTitle(string data)
     {
         var addiction = Count > 0 && Max > 0 ? $"[{Math.Round(GetPercent(Max, Count), 2)}%] " : "";
-        if (addiction != "") TaskBar.SetProgress(GetPercent(Max, Count));
+        if (addiction != "") TaskBar.SetProgress(Count, Max);
 
         var title = $"{addiction}CryptoEat {Tag} | {data}";
 
@@ -24,8 +24,8 @@ internal static class Helpers
 
     internal static void WriteTip(string tip)
     {
-        Console.Write("[TIP] ", Color.LightCoral);
-        Console.WriteLine(tip, Color.Coral);
+        Console.Write("[TIP] ");
+        Console.WriteLine(tip);
     }
 
     internal static void ResetCounters()

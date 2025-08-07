@@ -1,7 +1,7 @@
 ﻿using System.Net;
+using System.Net.Http;
 using System.Reflection;
 using CryptoEat.Modules;
-using Leaf.xNet;
 using MemoryPack;
 using Newtonsoft.Json;
 using ZstdSharp;
@@ -19,7 +19,8 @@ public static class DeBankCache
 
 internal class DeBank : IDisposable
 {
-    private HttpRequest request = Generic.ProxyList.Next().GetHttpRequest();
+    private HttpRequestMessage request = new();
+    private static readonly HttpClient httpClient = new();
 
     public void Dispose()
     {
@@ -28,7 +29,7 @@ internal class DeBank : IDisposable
 
     public void RotateProxy()
     {
-        request = Generic.ProxyList.Next().GetHttpRequest();
+        // Logic to rotate proxy if needed
     }
 
     public static void SaveCache()
@@ -112,7 +113,7 @@ internal class DeBank : IDisposable
 
     private List<TokenList>? GetTokensInternal(string address)
     {
-        var resp = request.Get($"https://api.debank.com/token/cache_balance_list?user_addr={address}").ToString()!;
+        var resp = httpClient.GetStringAsync($"https://api.debank.com/token/cache_balance_list?user_addr={address}").Result;
         var deserialized = JsonConvert.DeserializeObject<Chain>(resp)?.Data;
         RotateProxy();
 

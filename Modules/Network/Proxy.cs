@@ -1,145 +1,72 @@
 ﻿using System.Net;
-using System.Text.RegularExpressions;
-using Leaf.xNet;
+using System.Net.Http;
+using CryptoEat.Models;
 
 namespace CryptoEat.Modules.Network;
 
-internal partial class Proxy
+public class Proxy
 {
-    private static readonly Regex Regex = ProxyLoginPass();
-    private static readonly Regex Regex2 = ProxyDefault();
-    private WebProxy? _proxy;
-    internal string? Ip;
-    internal string? Login, Password, Format, Raw;
-    internal int Port;
-    private HttpRequest? _request;
+    public string Host { get; set; } = string.Empty;
+    public int Port { get; set; }
+    public string? Username { get; set; }
+    public string? Password { get; set; }
+    public ProxyType Type { get; set; }
 
-    internal bool IsSystem = false;
-
-    internal static Proxy? InitFromString(string str, string format)
+    public static Proxy? InitFromString(string proxyString, string format)
     {
-        if (Regex.IsMatch(str))
-        {
-            var values = Regex.Match(str).Groups.Values.ToArray();
-            var proxy = new Proxy
-            {
-                Ip = values[1].Value,
-                Port = int.Parse(values[2].Value),
-                Login = values[3].Value,
-                Password = values[4].Value,
-                Format = format,
-                Raw = str,
-                _request = new HttpRequest
-                {
-                    Proxy = ProxyClient.Parse(format switch
-                    {
-                        "socks4" => ProxyType.Socks4,
-                        "socks5" => ProxyType.Socks5,
-                        "socks4a" => ProxyType.Socks4A,
-                        _ => ProxyType.HTTP
-                    }, str),
-                    ConnectTimeout = 5000,
-                    KeepAlive = false
-                }
-            };
-            return proxy;
-        }
+        var parts = proxyString.Split(':');
+        if (parts.Length < 2) return null;
 
-        if (!Regex2.IsMatch(str)) return null;
+        var proxy = new Proxy
         {
-            var values = Regex2.Match(str).Groups.Values.ToArray();
-            var proxy = new Proxy
+            Host = parts[0],
+            Type = format?.ToLower() switch
             {
-                Ip = values[1].Value,
-                Port = int.Parse(values[2].Value),
-                Format = format,
-                Raw = str,
-                _request = new HttpRequest
-                {
-                    Proxy = ProxyClient.Parse(format switch
-                    {
-                        "socks4" => ProxyType.Socks4,
-                        "socks5" => ProxyType.Socks5,
-                        "socks4a" => ProxyType.Socks4A,
-                        _ => ProxyType.HTTP
-                    }, str),
-                    ConnectTimeout = 7000
-                }
-            };
-            return proxy;
-        }
-    }
-
-    internal WebProxy GetWebProxy()
-    {
-        if (Login == null && Password == null)
-            _proxy ??= new WebProxy
-            {
-                Address = new Uri($"{Format}://{Ip}:{Port}"),
-                UseDefaultCredentials = false
-            };
-
-        return _proxy ??= new WebProxy
-        {
-            Address = new Uri($"{Format}://{Ip}:{Port}"),
-            Credentials = new NetworkCredential(Login, Password),
-            UseDefaultCredentials = false
-        };
-    }
-
-    internal HttpRequest GetHttpRequest()
-    {
-        return _request ??= new HttpRequest
-        {
-            Proxy = ProxyClient.Parse(Format switch
-            {
+                "http" => ProxyType.Http,
                 "socks4" => ProxyType.Socks4,
                 "socks5" => ProxyType.Socks5,
-                "socks4a" => ProxyType.Socks4A,
-                _ => ProxyType.HTTP
-            }, Raw),
-            ConnectTimeout = 7000
+                _ => ProxyType.Http
+            }
         };
+
+        var proxyPort = proxy.Port;
+        if (!int.TryParse(parts[1], out proxyPort)) return null;
+
+        proxy.Port = proxyPort;
+        
+        if (parts.Length >= 4)
+        {
+            proxy.Username = parts[2];
+            proxy.Password = parts[3];
+        }
+
+        return proxy;
     }
 
-    internal bool Check(bool title = true)
+    public bool Check()
     {
         try
         {
-            _request ??= GetHttpRequest();
+            using var handler = new HttpClientHandler();
+            var webProxy = new WebProxy($"{Host}:{Port}");
 
-            if (title)
+            if (!string.IsNullOrEmpty(Username))
             {
-                Helpers.Count++;
-                Helpers.SetTitle("Checking proxies...");
+                webProxy.Credentials = new NetworkCredential(Username, Password);
             }
 
-            var response = _request.Get("https://debank.com/");
-            return response.IsOK;
-        }
-        catch (HttpException)
-        {
-            return true;
-        }
-        catch (ProxyException)
-        {
-            if (Format != "socks4") return false;
+            handler.Proxy = webProxy;
+            handler.UseProxy = true;
 
-            _request ??= GetHttpRequest();
+            using var client = new HttpClient(handler);
+            client.Timeout = TimeSpan.FromSeconds(10);
 
-            Format = "socks4a";
-            _request.Proxy = ProxyClient.Parse(ProxyType.Socks4A, Raw);
-            return Check(false);
+            var response = client.GetAsync("http://httpbin.org/ip").Result;
+            return response.IsSuccessStatusCode;
         }
         catch
         {
             return false;
         }
     }
-
-    [GeneratedRegex("(.+):(.+):(.+):(.+)", RegexOptions.Compiled)]
-    private static partial Regex ProxyLoginPass();
-
-    [GeneratedRegex("(.+):(.+)", RegexOptions.Compiled)]
-    private static partial Regex ProxyDefault();
 }

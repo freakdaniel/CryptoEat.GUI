@@ -1,0 +1,267 @@
+﻿/* Settings Page Styles */
+.settings-header {
+  text-align: center;
+  margin-bottom: 48px;
+  padding: 40px 0;
+}
+
+.settings-header h1 {
+  font-size: 36px;
+  font-weight: 700;
+  background: white;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 16px;
+  letter-spacing: -0.02em;
+}
+
+.settings-header p {
+  font-size: 16px;
+  color: var(--text-secondary);
+  font-weight: 400;
+  max-width: 500px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* Settings Grid */
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 32px;
+  margin-bottom: 48px;
+}
+
+.settings-card {
+  padding: 32px;
+  position: relative;
+  overflow: visible; /* Изменено с hidden на visible */
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-glass);
+}
+
+.card-icon {
+  font-size: 24px;
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-header h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.form-label {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Возвращаем нормальный отступ 8px вместо 12px */
+  font-weight: 500;
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin: 0;
+}
+
+.form-label i {
+  font-size: 16px;
+  color: var(--text-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tooltip-icon {
+  color: var(--text-tertiary);
+  cursor: help;
+  font-size: 16px;
+  opacity: 0.7;
+  transition: all var(--transition-normal);
+}
+
+.tooltip-icon:hover {
+  opacity: 1;
+  color: var(--primary-color);
+  transform: scale(1.1);
+}
+
+/* Settings card overflow fix for tooltips - убираем скрытие */
+.settings-card {
+  padding: 32px;
+  position: relative;
+  overflow: visible;
+  z-index: 1; /* Добавляем базовый z-index */
+}
+
+/* Увеличиваем z-index для активных карточек с подсказками */
+.settings-card:hover {
+  z-index: 100;
+}
+
+/* Custom Checkbox Styles - уменьшаем отступы между чекбоксами */
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  padding: 8px 16px; /* Уменьшаем padding с 12px до 8px */
+  border-radius: var(--radius-medium);
+  transition: all var(--transition-normal);
+  margin-bottom: 8px; /* Добавляем небольшой отступ снизу */
+  position: relative;
+}
+
+.checkbox-label:hover {
+  background: var(--bg-glass-hover);
+}
+
+.checkbox-tooltip-icon {
+  margin-left: auto;
+  color: var(--text-tertiary);
+  cursor: help;
+  font-size: 16px;
+  opacity: 0.7;
+  transition: all var(--transition-normal);
+}
+
+.checkbox-tooltip-icon:hover {
+  opacity: 1;
+  color: var(--primary-color);
+  transform: scale(1.1);
+}
+
+.checkbox-input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.checkbox-custom {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border-glass);
+  border-radius: var(--radius-small);
+  background: var(--bg-glass);
+  transition: all var(--transition-normal);
+  flex-shrink: 0;
+}
+
+.checkbox-custom::after {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 2px;
+  width: 6px;
+  height: 10px;
+  border: solid var(--text-primary);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+}
+
+.checkbox-input:checked + .checkbox-custom {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+  border-color: var(--primary-color);
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+}
+
+.checkbox-input:checked + .checkbox-custom::after {
+  opacity: 1;
+}
+
+.checkbox-text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  color: var(--text-primary);
+  font-size: 14px;
+}
+
+.checkbox-text i {
+  font-size: 16px;
+  color: var(--text-tertiary);
+}
+
+/* Settings Actions */
+.settings-actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.btn-success {
+  background: linear-gradient(135deg, var(--success-color), #059669);
+  border-color: var(--success-color);
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+.btn-success:hover {
+  background: linear-gradient(135deg, #059669, var(--success-color));
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+/* Исправляем стили кнопки сброса */
+.btn-reset {
+  background: linear-gradient(135deg, var(--error-color), #dc2626) !important;
+  border-color: var(--error-color) !important;
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3) !important;
+  color: #ffffff !important; /* Явно указываем белый цвет текста */
+}
+
+.btn-reset:hover {
+  background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5) !important;
+  border-color: #dc2626 !important;
+  color: #ffffff !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .settings-header h1 {
+    font-size: 28px;
+  }
+  
+  .settings-header p {
+    font-size: 14px;
+  }
+  
+  .settings-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+  
+  .settings-card {
+    padding: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .settings-header h1 {
+    font-size: 24px;
+  }
+  
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .checkbox-label {
+    padding: 12px 8px;
+  }
+}

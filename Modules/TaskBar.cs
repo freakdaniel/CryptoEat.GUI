@@ -1,26 +1,22 @@
-﻿using TaskBarProgress;
-using TaskBarProgress.Enums;
+﻿namespace CryptoEat.Modules;
 
-namespace CryptoEat.Modules;
-
-internal static class TaskBar
+public static class TaskBar
 {
-    private static TaskbarStates _currentState = TaskbarStates.NoProgress;
-
-    internal static void SetEmpty()
+    public static void SetEmpty()
     {
-        _currentState = TaskbarStates.NoProgress;
-        Progress.SetState(TaskbarStates.NoProgress);
+        // TODO: Remove TaskBarProgress dependency - not needed for web interface
+        // TaskbarProgress.SetState(TaskbarStates.NoProgress);
     }
 
-    internal static void SetProgress(decimal progress)
+    public static void SetProgress(int value, int max)
     {
-        if (_currentState != TaskbarStates.Normal)
-        {
-            _currentState = TaskbarStates.Normal;
-            Progress.SetState(TaskbarStates.Normal);
-        }
+        // TODO: Remove TaskBarProgress dependency - progress will be shown in web interface
+        // TaskbarProgress.SetValue(value, max);
+    }
 
-        Progress.SetValue((double) progress, 100d);
+    public static void SetError()
+    {
+        // TODO: Remove TaskBarProgress dependency - errors will be shown in web interface
+        // TaskbarProgress.SetState(TaskbarStates.Error);
     }
 }

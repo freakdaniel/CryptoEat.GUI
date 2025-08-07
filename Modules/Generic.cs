@@ -3,12 +3,11 @@ using System.Runtime.InteropServices;
 using System.Text;
 using CryptoEat.Modules.HelpersN;
 using CryptoEat.Modules.Logs;
-using CryptoEat.Modules.Models;
+using CryptoEat.Models;
 using CryptoEat.Modules.Network;
 using CryptoEat.Modules.Scanners;
 using Debank;
 using Newtonsoft.Json;
-using Pastel;
 
 namespace CryptoEat.Modules;
 
@@ -16,18 +15,20 @@ internal static partial class Generic
 {
     internal static void GreetUser()
     {
-        Console.Write("Hello, ", Color.Coral);
-        Console.Write(Environment.UserName, Color.LightCoral);
-        Console.WriteLine("!", Color.Coral);
+        // TODO: Remove console output - this will be handled by web interface
+        // Console.Write("Hello, ");
+        // Console.Write(Environment.UserName);
+        // Console.WriteLine("!");
     }
 
     internal static void RequestPath()
     {
-        Console.Write(
-            "Enter the path to the folder, you can just drag it to this window, and then press '",
-            Color.Coral);
-        Console.Write("Enter", Color.LightCoral);
-        Console.WriteLine("' ;)", Color.Coral);
+        // TODO: Remove console input - this will be handled by web interface
+        // Console.Write(
+        //     "Enter the path to the folder, you can just drag it to this window, and then press '",
+        //     Color.Coral);
+        // Console.Write("Enter");
+        // Console.WriteLine("' ;)");
 
         while (Path.Length == 0)
         {
@@ -52,8 +53,7 @@ internal static partial class Generic
                         if (dirpath is not null && !string.IsNullOrEmpty(dirpath))
                         {
                             Console.WriteLine(
-                                "It looks like you dragged the file or entered the path to the file. Can I use the folder containing it? If yes, press space",
-                                Color.LightGreen);
+                                "It looks like you dragged the file or entered the path to the file. Can I use the folder containing it? If yes, press space");
                             if (Console.ReadKey().Key == ConsoleKey.Spacebar)
                             {
                                 Path = dirpath;
@@ -68,10 +68,9 @@ internal static partial class Generic
             }
 
             Console.Write(
-                "This folder either does not exist, or you entered an empty line!\nTry again, enter the path or drag the folder into the window and press '",
-                Color.DeepPink);
-            Console.Write("Enter", Color.HotPink);
-            Console.WriteLine("' >.<", Color.DeepPink);
+                "This folder either does not exist, or you entered an empty line!\nTry again, enter the path or drag the folder into the window and press '");
+            Console.Write("Enter");
+            Console.WriteLine("' >.<");
         }
     }
 
@@ -104,7 +103,7 @@ internal static partial class Generic
     internal static void ProcessPath()
     {
         Console.Clear();
-        Console.WriteLine("I start collecting folders - we'll have to wait...", Color.Coral);
+        Console.WriteLine("I start collecting folders - we'll have to wait...");
         Helpers.WriteTip("Information about the current progress can be seen in the header of the window");
 
         DirsList = FileSystem.ScanDirectories(Path, true)
@@ -123,7 +122,7 @@ internal static partial class Generic
             }
             else
             {
-                Console.WriteLine("Missing settings.json. Contact the developer.", Color.DeepPink);
+                Console.WriteLine("Missing settings.json. Contact the developer.");
                 Console.ReadLine();
 
                 Environment.Exit(-1);
@@ -133,7 +132,7 @@ internal static partial class Generic
         catch (Exception e)
         {
             WriteError(e);
-            Console.WriteLine("Incorrect settings. Contact the developer.", Color.DeepPink);
+            Console.WriteLine("Incorrect settings. Contact the developer.");
             Console.ReadLine();
 
             Environment.Exit(-1);
@@ -191,7 +190,7 @@ internal static partial class Generic
 
             if (!tempProxy.Any())
             {
-                Console.WriteLine("No proxy!", Color.DeepPink);
+                Console.WriteLine("No proxy!");
                 Console.ReadLine();
 
                 Environment.Exit(-1);
@@ -227,20 +226,20 @@ internal static partial class Generic
 
             if (!tempList.Any())
             {
-                Console.WriteLine("No proxy!", Color.DeepPink);
+                Console.WriteLine("No proxy!");
                 Console.ReadLine();
 
                 Environment.Exit(-1);
                 Environment.FailFast("no_prox");
             }
 
-            Console.WriteLine($"Loaded {tempList.Count.ToString().Pastel(Color.LightCoral)} proxies");
+            Console.WriteLine($"Loaded {tempList.Count.ToString()} proxies");
             ProxyList = new EnumeratorWrapper<Proxy>(tempList);
             ProxyCount = tempList.Count;
         }
         else if (Settings.Scan)
         {
-            Console.WriteLine("No proxy!", Color.DeepPink);
+            Console.WriteLine("No proxy!");
             Console.ReadLine();
 
             Environment.Exit(-1);
