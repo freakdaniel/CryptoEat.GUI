@@ -17,7 +17,14 @@
       "**/*",
       "!**/node_modules/**/*",
       "!**/*.pdb"
+    ],
+    "extraResources": [
+      {
+        "from": "ClientApp/node_modules",
+        "to": "app/node_modules",
+        "filter": ["**/*"]
+      }
     ]
   },
-  "aspCoreBackendPort": 8000
+  "aspCoreBackendPort": 8001
 }
