@@ -34,7 +34,7 @@ const AnimatedRoutes: React.FC = () => {
     type: "tween" as const,
     ease: "anticipate" as const,
     duration: 0.4
-  };
+  } as const;
 
   return (
     <AnimatePresence mode="wait" initial={false}>

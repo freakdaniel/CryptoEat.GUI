@@ -25,7 +25,6 @@
   line-height: 1.6;
 }
 
-/* Status Cards */
 .status-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
@@ -39,7 +38,6 @@
   overflow: hidden;
 }
 
-/* Убираем hover эффекты для карточек на главной странице */
 .status-card:hover {
   background: var(--bg-glass);
   border-color: var(--border-glass);
@@ -159,7 +157,6 @@
   font-size: 13px;
 }
 
-/* Quick Actions */
 .quick-actions {
   background: var(--bg-glass);
   backdrop-filter: blur(var(--blur-glass));
@@ -212,7 +209,6 @@
   gap: 16px;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .home-header h1 {
     font-size: 36px;

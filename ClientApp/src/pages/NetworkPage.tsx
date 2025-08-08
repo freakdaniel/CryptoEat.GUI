@@ -194,7 +194,6 @@ const NetworkPage: React.FC = () => {
           
           <div className="connection-test">
             <div className="form-group">
-              
               <label className="form-label">
                 <i className="bx bx-link"></i>
                 URL для тестирования

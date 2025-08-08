@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { settingsApi } from '../services/api';
 import { Settings } from '../types';
 import Tooltip from '../components/Tooltip';
+import CustomSelect from '../components/CustomSelect';
 import './SettingsPage.css';
 
 const SettingsPage: React.FC = () => {
@@ -226,23 +227,25 @@ const SettingsPage: React.FC = () => {
                 Уровень брутфорса
               </label>
               <Tooltip 
-                content="Определяет интенсивность перебора ключей. Чем выше уровень, тем больше вычислительных ресурсов используется."
+                content="Определяет интенсивность перебора ключей. Чем выше уровень, тем больше вычислительных ресурсов используется и тем выше вероятность нахождения пароля"
                 position="right"
               >
                 <i className="bx bx-help-circle tooltip-icon"></i>
               </Tooltip>
             </div>
-            <select
-              className="select form-control"
+            <CustomSelect
+              options={[
+                { value: 1, label: '1 - Базовый' },
+                { value: 2, label: '2 - Легкий' },
+                { value: 3, label: '3 - Средний' },
+                { value: 4, label: '4 - Интенсивный' },
+                { value: 5, label: '5 - Максимальный' }
+              ]}
               value={settings.bruteLevel}
-              onChange={(e) => handleInputChange('bruteLevel', parseInt(e.target.value))}
-            >
-              <option value={1}>1 - Базовый</option>
-              <option value={2}>2 - Легкий</option>
-              <option value={3}>3 - Средний</option>
-              <option value={4}>4 - Интенсивный</option>
-              <option value={5}>5 - Максимальный</option>
-            </select>
+              onChange={(value) => handleInputChange('bruteLevel', value)}
+              placeholder="Выберите уровень брутфорса"
+              className="form-control"
+            />
           </div>
 
           <div className="form-group">

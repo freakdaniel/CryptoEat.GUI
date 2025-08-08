@@ -36,7 +36,10 @@ export interface BruteForceResult {
   success: boolean;
   attemptedPasswords: number;
   foundPassword?: string;
+  password?: string;
   duration: string;
+  timeElapsed?: string;
+  attempts?: number;
 }
 
 export interface NetworkStats {
